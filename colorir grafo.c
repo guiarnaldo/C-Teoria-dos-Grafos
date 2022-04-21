@@ -10,6 +10,43 @@ int mostrarTodos(int matriz[TAMANHO][TAMANHO]){
 	}
 	return 0;
 }
+int colorirGrafo(int matriz[TAMANHO][TAMANHO], int comeco){
+	int i, j, k;
+	int cores[TAMANHO];
+	int naoColorido = comeco;
+	int diferente = 0;
+	//cores
+	for(i=0;i<TAMANHO;i++){
+		cores[i] = i+10;
+	}
+	
+	//primeira aresta
+	for(i=0;i<TAMANHO;i++){
+		if(matriz[i][comeco] == 1) matriz[i][comeco] = cores[0];
+	}
+	//verifica o vizinho
+	for(i=0;i<TAMANHO;i++){
+		if(matriz[comeco][i] == 1) naoColorido = i;
+	}
+	
+	for(i=0;i<TAMANHO;i++){
+		for(j=0;j<TAMANHO;j++){
+			if(matriz[naoColorido][j] == cores[i]) diferente = 1;
+		}
+		if(diferente == 0){
+			for(j=0;j<TAMANHO;j++){
+				matriz[j][naoColorido] = cores[i];
+			}
+			break;
+		}else{
+			diferente = 0;
+		}
+	}
+	
+	
+	mostrarMatriz(matriz);
+	return 0;
+}
 int encontrarCaminho(int ini, int dest, int matriz[6][6]){
 	int verticeIsolado = 0;
 	int i, j, k;
@@ -142,20 +179,41 @@ int resetar(int matriz[TAMANHO][TAMANHO]){
 		}
 	}
 	//caminhos
-	matriz[0][1] = 1;
 	matriz[0][3] = 1;
-	matriz[0][2] = 1;
-	matriz[1][2] = 1;
-	matriz[1][0] = 1;
-	matriz[2][1] = 1;
-	matriz[2][0] = 1;
-	matriz[2][4] = 1;
-	matriz[2][5] = 1;
 	matriz[3][0] = 1;
+	
+	matriz[3][5] = 1;
+	matriz[5][3] = 1;
+	
+	matriz[5][1] = 1;
+	matriz[1][5] = 1;
+	
+	matriz[3][6] = 1;
+	matriz[6][3] = 1;
+	
+	matriz[1][6] = 1;
+	matriz[6][1] = 1;
+	
+	matriz[4][6] = 1;
+	matriz[6][4] = 1;
+	
+	matriz[1][4] = 1;
+	matriz[4][1] = 1;
+	
 	matriz[4][2] = 1;
-	matriz[4][5] = 1;
-	matriz[5][2] = 1;
-	matriz[5][4] = 1;
+	matriz[2][4] = 1;
+	
+	matriz[1][3] = 1;
+	matriz[3][1] = 1;
+	
+	matriz[3][4] = 1;
+	matriz[4][3] = 1;
+	
+	matriz[5][6] = 1;
+	matriz[6][5] = 1;
+	
+	matriz[2][6] = 1;
+	matriz[6][2] = 1;
 	
 	return 0;
 }
@@ -190,7 +248,10 @@ int main(){
 			break;
 			case 5: procuraPontes(matriz);
 			break;
-			case 6: parar = 1; break;
+			case 6: printf("Digite o vértice inicial\n");
+			scanf("%d", &vertice);
+			colorirGrafo(matriz, vertice-1); break;
+			case 7: parar = 1; break;
 			default: printf("\nOpção inválida");
 		}
 	}while(parar!=1);
