@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <locale.h>
-#define TAMANHO 6
+#define TAMANHO 7
+
+//cores
+int cores[TAMANHO];
+
 int mostrarTodos(int matriz[TAMANHO][TAMANHO]){
 	int i, j;
 	for(i=0;i<TAMANHO;i++){
@@ -10,32 +14,44 @@ int mostrarTodos(int matriz[TAMANHO][TAMANHO]){
 	}
 	return 0;
 }
-int colorirGrafo(int matriz[TAMANHO][TAMANHO], int comeco){
+int colorirGrafo(int matriz[TAMANHO][TAMANHO], int comeco, int pVez){
 	int i, j, k;
-	int cores[TAMANHO];
-	int naoColorido = comeco;
+	int naoColorido = pVez;
 	int diferente = 0;
-	//cores
-	for(i=0;i<TAMANHO;i++){
-		cores[i] = i+10;
-	}
+	
 	
 	//primeira aresta
-	for(i=0;i<TAMANHO;i++){
-		if(matriz[i][comeco] == 1) matriz[i][comeco] = cores[0];
-	}
-	//verifica o vizinho
-	for(i=0;i<TAMANHO;i++){
-		if(matriz[comeco][i] == 1) naoColorido = i;
+	if(pVez == -1){
+		for(i=0;i<TAMANHO;i++){
+			if(matriz[i][comeco] == 1) matriz[i][comeco] = cores[0];
+		}
+		pVez = comeco;
 	}
 	
+	//verifica o vizinho
+	for(i=0;i<TAMANHO;i++){
+		if(matriz[pVez][i] == 1){
+			naoColorido = i;
+			diferente = 1;
+		}
+	}
+	
+	if(diferente == 0){
+		for(i=0;i<TAMANHO;i++){
+			for(j=0;j<TAMANHO;j++){
+				if(matriz[i][j] == 1) naoColorido = i;
+			}
+		}	
+	}
+	//procura uma cor pra colocar
+	diferente = 0;
 	for(i=0;i<TAMANHO;i++){
 		for(j=0;j<TAMANHO;j++){
 			if(matriz[naoColorido][j] == cores[i]) diferente = 1;
 		}
 		if(diferente == 0){
 			for(j=0;j<TAMANHO;j++){
-				matriz[j][naoColorido] = cores[i];
+				if(matriz[j][naoColorido] == 1)matriz[j][naoColorido] = cores[i];
 			}
 			break;
 		}else{
@@ -43,11 +59,17 @@ int colorirGrafo(int matriz[TAMANHO][TAMANHO], int comeco){
 		}
 	}
 	
+	diferente = 0;
 	
-	mostrarMatriz(matriz);
+	for(i=0;i<TAMANHO;i++){
+		for(j=0;j<TAMANHO;j++){
+			if(matriz[i][j] == 1) diferente = 1;
+		}
+	}
+	if(diferente == 1 ) colorirGrafo(matriz, comeco, naoColorido);
 	return 0;
 }
-int encontrarCaminho(int ini, int dest, int matriz[6][6]){
+int encontrarCaminho(int ini, int dest, int matriz[TAMANHO][TAMANHO]){
 	int verticeIsolado = 0;
 	int i, j, k;
 	int inicio = ini; //cria copia do inicio e do destino caso precise fazer uma recursividade
@@ -105,7 +127,12 @@ int mostrarVertice(int vertice,int matriz[TAMANHO][TAMANHO]){
 }
 int mostrarMatriz(int matriz[TAMANHO][TAMANHO]){
 	int i, j;
-	printf("\n\t1\t2\t3\t4\t5\t6\n");
+	printf("\n");
+	for(i=0;i<TAMANHO;i++){
+		printf("\t%d", i+1);
+	}
+	printf("\n");
+	
 	for(i=0;i<TAMANHO;i++){
 		for(j=0;j<TAMANHO;j++){
 			if(j%TAMANHO == 0)printf("\n%d\t", i+1);
@@ -221,9 +248,12 @@ int resetar(int matriz[TAMANHO][TAMANHO]){
 int main(){
 	setlocale(LC_ALL, "Portuguese");
 	int matriz[TAMANHO][TAMANHO];
+	int i;
 	//zera a matriz
 	resetar(matriz);
-	
+	for(i=0;i<TAMANHO;i++){
+		cores[i] = i+10;
+	}
 	
 	int opcoes;
 	int parar = 0;
@@ -231,7 +261,7 @@ int main(){
 	int vertice2 = 1;
 	do{
 		printf("\nEscolha uma opção:\n1:mostrar matriz\n2:mostrar todos os incidêntes\n");
-		printf("3:mostrar incidênte especifico\n4:encontrar caminho\n5:encontrar ponte\n6:sair\n");
+		printf("3:mostrar incidênte especifico\n4:encontrar caminho\n5:encontrar ponte\n6:colorir grafo\n7:sair\n");
 		scanf("%d", &opcoes);
 		switch(opcoes){
 			case 1: mostrarMatriz(matriz); break;
@@ -250,11 +280,14 @@ int main(){
 			break;
 			case 6: printf("Digite o vértice inicial\n");
 			scanf("%d", &vertice);
-			colorirGrafo(matriz, vertice-1); break;
+			colorirGrafo(matriz, vertice-1, -1);
+			mostrarMatriz(matriz);
+			resetar(matriz);
+			break;
 			case 7: parar = 1; break;
 			default: printf("\nOpção inválida");
 		}
 	}while(parar!=1);
-	
+	return 0;
 }
 
