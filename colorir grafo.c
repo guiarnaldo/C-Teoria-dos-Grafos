@@ -17,7 +17,7 @@ int mostrarTodos(int matriz[TAMANHO][TAMANHO]){
 int colorirGrafo(int matriz[TAMANHO][TAMANHO], int comeco, int pVez){
 	int i, j, k;
 	int naoColorido = pVez;
-	int diferente = 0;
+	int aux = 0;
 	
 	
 	//primeira aresta
@@ -32,11 +32,11 @@ int colorirGrafo(int matriz[TAMANHO][TAMANHO], int comeco, int pVez){
 	for(i=0;i<TAMANHO;i++){
 		if(matriz[pVez][i] == 1){
 			naoColorido = i;
-			diferente = 1;
+			aux = 1;
 		}
 	}
 	
-	if(diferente == 0){
+	if(aux == 0){
 		for(i=0;i<TAMANHO;i++){
 			for(j=0;j<TAMANHO;j++){
 				if(matriz[i][j] == 1) naoColorido = i;
@@ -44,29 +44,29 @@ int colorirGrafo(int matriz[TAMANHO][TAMANHO], int comeco, int pVez){
 		}	
 	}
 	//procura uma cor pra colocar
-	diferente = 0;
+	aux = 0;
 	for(i=0;i<TAMANHO;i++){
 		for(j=0;j<TAMANHO;j++){
-			if(matriz[naoColorido][j] == cores[i]) diferente = 1;
+			if(matriz[naoColorido][j] == cores[i]) aux = 1;
 		}
-		if(diferente == 0){
+		if(aux == 0){
 			for(j=0;j<TAMANHO;j++){
 				if(matriz[j][naoColorido] == 1)matriz[j][naoColorido] = cores[i];
 			}
 			break;
 		}else{
-			diferente = 0;
+			aux = 0;
 		}
 	}
 	
-	diferente = 0;
+	aux = 0;
 	
 	for(i=0;i<TAMANHO;i++){
 		for(j=0;j<TAMANHO;j++){
-			if(matriz[i][j] == 1) diferente = 1;
+			if(matriz[i][j] == 1) aux = 1;
 		}
 	}
-	if(diferente == 1 ) colorirGrafo(matriz, comeco, naoColorido);
+	if(aux == 1 ) colorirGrafo(matriz, comeco, naoColorido);
 	return 0;
 }
 int encontrarCaminho(int ini, int dest, int matriz[TAMANHO][TAMANHO]){
